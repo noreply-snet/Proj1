@@ -6,6 +6,9 @@ from app.Crud import user_crud
 from app.DB import models,schemas
 from app.DB.db import get_db
 from app.Auth import security
+import uuid
+
+
 
 router = APIRouter()
 
@@ -19,13 +22,14 @@ async def login_for_access_token(db: Session = Depends(get_db), form_data: OAuth
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
+    jwt_id = str(uuid.uuid4())
     access_token_expires = timedelta(minutes=security.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = security.create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
+        data={"sub": user.username}, expires_delta=access_token_expires,jwi=jwt_id
     )
-    refresh_token_expires = timedelta(minutes=security.REFRESH_TOKEN_EXPIRE_MINUTES)
+    refresh_token_expires = timedelta(minutes=security.REFRESH_TOKEN_EXPIRE_MINUTES,)
     refresh_token = security.create_refresh_token(
-        data={"sub": user.username}, expires_delta=refresh_token_expires
+        data={"sub": user.username}, expires_delta=refresh_token_expires,jwi=jwt_id
     )
     return {"access_token": access_token, "refresh_token": refresh_token, "token_type": "bearer"}
 

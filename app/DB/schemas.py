@@ -62,3 +62,4 @@ class Token(BaseModel):
 
 class Token1(BaseModel):
     token: str
+

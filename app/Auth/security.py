@@ -7,7 +7,7 @@ from passlib.context import CryptContext
 from jose import JWTError, jwt
 from app.Crud import user_crud
 from app.DB import schemas,db
-
+from .auth_crud import revoke_token, is_token_revoked
 
 SECRET_KEY = "your_secret_key"
 ALGORITHM = "HS256"
@@ -32,58 +32,73 @@ def authenticate_user(db: Session, username: str, password: str):
         return False
     return user
 
-def create_access_token(data: dict, expires_delta: timedelta = None):
+def create_access_token(data: dict, expires_delta: timedelta = None, jwi:str = None):
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=15)
-    to_encode.update({"exp": expire})
+        expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode.update({"exp": expire, "jti": jwi})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-def create_refresh_token(data: dict, expires_delta: timedelta = None):
+def create_refresh_token(data: dict, expires_delta: timedelta = None,jwi:str = None):
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
     else:
         expire = datetime.utcnow() + timedelta(minutes=REFRESH_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": expire})
+    to_encode.update({"exp": expire, "jti": jwi})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-def verify_token(token: str):
-    credentials_exception = HTTPException(
+
+def verify_token(db: Session, token: str):
+    excp = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
-    u_name = ''
     try:
-        # Decode the JWT token
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        
+        # Check if the token is revoked
+        if is_token_revoked(db, payload["jti"]):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token has been revoked",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        
+        # Check for expiration
+        if "exp" in payload and datetime.utcnow() > datetime.fromtimestamp(payload["exp"]):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token has expired",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        
         username: str = payload.get("sub")
         if username is None:
-            raise credentials_exception
-        
-        # Check for time expiration 
-        if "exp" in payload:
-            if datetime.utcnow() > datetime.fromtimestamp(payload["exp"]):
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Token has expired",
-                    headers={"WWW-Authenticate": "Bearer"},
-                )
-        u_name=username
+            raise excp
+
+        return payload  # Return the payload
+
     except JWTError:
-        raise credentials_exception
+        raise excp
+
+async def get_current_user(db: Session = Depends(db.get_db), token: str = Depends(oauth2_scheme)):
+    exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
     
-    return u_name
-
-
-async def get_current_user(db:Session = Depends(db.get_db), token: str = Depends(oauth2_scheme)):
-    username = verify_token(token=token)
+    payload = verify_token(db=db, token=token)
+    username: str = payload.get("sub")
+    # Fetch the user from the database using the username
     user = user_crud.get_user_by_username(db, username)
     if user is None:
-        raise credentials_exception
+        raise exception
+    
     return user
