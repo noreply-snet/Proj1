@@ -4,12 +4,17 @@ from sqlalchemy.orm import relationship
 from .db import Base
 
 
+
+
+
 student_course_link = Table(
     'student_course_link',
     Base.metadata,
     Column('student_id',String, ForeignKey('students.std_id')),
     Column('course_id',String, ForeignKey('courses.course_id'))
 )
+
+
 
 
 class Student(Base):
@@ -27,3 +32,9 @@ class Course(Base):
     course_id = Column(String,unique=True)
     students = relationship("Student", secondary=student_course_link, back_populates="courses")
 
+class Users(Base):
+    __tablename__ = 'users'
+    id = Column(Integer, primary_key=True,index=True)
+    name = Column(String)
+    username = Column(String,unique=True)
+    hashed_password = Column(String)

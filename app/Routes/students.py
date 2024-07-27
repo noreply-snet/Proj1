@@ -1,12 +1,12 @@
 from fastapi import APIRouter,Depends
 from sqlalchemy.orm import Session
-from DB import db,schemas
-from Crud import crud
+from ..DB import db,schemas
+from ..Crud import crud
 from typing import List
 
 router = APIRouter()
 
-@router.post("/",response_model=schemas.StudentCreate)
+@router.post("/",response_model=schemas.StudentResponse)
 def student_create(student:schemas.StudentCreate,db:Session = Depends(db.get_db)):
     return crud.create_student(db=db,student=student)
 
