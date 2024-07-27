@@ -11,5 +11,5 @@ app.include_router(students.router,prefix="/student",tags=["student"])
 app.include_router(cources.router,prefix="/course",tags=["course"])
 app.include_router(token.router,prefix="/auth",tags=["auth"])
 app.include_router(user.router,prefix="/user",tags=["user"])
-app.include_router(user.lockRoutes,prefix="/user",tags=["lock_user"])
+app.include_router(user.lockRoutes,prefix="/lock",tags=["lock_user"])
 

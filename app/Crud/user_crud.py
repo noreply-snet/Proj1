@@ -10,8 +10,8 @@ from app.Auth.security import pwd_context
 def get_user_by_username(db: Session, username: str):
     return db.query(models.Users).filter(models.Users.username == username).first()
 
-def get_users(db: Session, skip: int = 0, limit: int = 10):
-    users = db.query(models.Users).offset(skip).limit(limit).all()
+def get_users(db: Session):
+    users = db.query(models.Users).all()
 
     return [
         schemas.UserResponse(
