@@ -3,11 +3,12 @@ from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from datetime import datetime, timedelta
-from passlib.context import CryptContext
+from app.Crud.user_crud import pwd_context
 from jose import JWTError, jwt
 from app.Crud import user_crud
-from app.DB import schemas,db
-from .auth_crud import revoke_token, is_token_revoked
+from app.DB import db
+from app.Auth.auth_crud import is_token_revoked
+from app.Auth.auth_schemas import JWTPayload
 
 SECRET_KEY = "your_secret_key"
 ALGORITHM = "HS256"
@@ -15,9 +16,6 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 REFRESH_TOKEN_EXPIRE_MINUTES = 1440  # 24 hours
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 
 
 
@@ -87,18 +85,21 @@ def verify_token(db: Session, token: str):
     except JWTError:
         raise excp
 
-async def get_current_user(db: Session = Depends(db.get_db), token: str = Depends(oauth2_scheme)):
-    exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    
-    payload = verify_token(db=db, token=token)
+def get_user_by_paload(db:Session, payload:JWTPayload):
     username: str = payload.get("sub")
-    # Fetch the user from the database using the username
     user = user_crud.get_user_by_username(db, username)
     if user is None:
-        raise exception
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return user # Return the user
+
+async def get_current_user(db: Session = Depends(db.get_db), token: str = Depends(oauth2_scheme)):
     
-    return user
+    payload = verify_token(db=db, token=token)
+    return get_user_by_paload(
+        db=db,
+        payload=payload
+    )

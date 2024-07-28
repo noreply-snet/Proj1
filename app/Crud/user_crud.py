@@ -1,10 +1,8 @@
 from sqlalchemy.orm import Session
 from app.DB import models,schemas
-from app.Auth.security import pwd_context
+from passlib.context import CryptContext
 
-
-
-
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def get_user_by_username(db: Session, username: str):

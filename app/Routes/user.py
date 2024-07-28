@@ -1,10 +1,10 @@
-from fastapi import APIRouter,Depends,HTTPException
+from fastapi import APIRouter,Depends
 from sqlalchemy.orm import Session
 from app.DB import db,schemas
 from app.Crud import user_crud
 from app.Auth import security
 from app.Auth.auth_crud import revoke_token
-from typing import List,Optional,Union
+from typing import List
 from datetime import datetime
 
 router = APIRouter()
@@ -21,11 +21,9 @@ def logout(token: str = Depends(security.oauth2_scheme), db: Session = Depends(d
 
 
 
-
 lockRoutes = APIRouter(
     dependencies=[Depends(security.get_current_user)]
 )
-
 
 
 
