@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from app.DB.db import engine,Base
-from app.Routes import students,cources,token,user
+from app.db.session import engine,Base
+from app.api import students,cources,token,user
 
 
 Base.metadata.create_all(bind=engine)

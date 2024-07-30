@@ -1,7 +1,7 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Table,DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime
-from app.DB.db import Base
+from app.db.session import Base
 
 class RevokedToken(Base):
     __tablename__ = 'revoked_tokens'

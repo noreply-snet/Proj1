@@ -1,0 +1,92 @@
+Woking Structure!! ✅
+
+my_fastapi_project/
+├── app/
+│   ├── __init__.py
+│   ├── core/
+│   │   ├── __init__.py
+│   │   ├── config.py
+│   │   ├── security.py
+│   │   ├── dependencies.py
+│   │   ├── auth.py
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── user.py
+│   ├── api/
+│   │   ├── __init__.py
+│   │   ├── users.py
+│   │   ├── admin.py
+│   │   ├── items.py
+│   ├── schemas/
+│   │   ├── __init__.py
+│   │   ├── user.py
+│   ├── crud/
+│   │   ├── __init__.py
+│   │   ├── user.py
+│   │   ├── item.py
+│   ├── database/
+│   │   ├── __init__.py
+│   │   ├── session.py
+│   ├── utils/
+│   │   ├── __init__.py
+│   │   ├── hashing.py
+│   │   ├── common.py
+|
+├── server.py
+└── requirements.txt
+
+
+#🚩 Advanced Structure of FastAPI
+
+my_fastapi_project/
+├── app/
+│   ├── __init__.py     # Marks the directory as a Python package
+│   ├── main.py            # Entry point for the FastAPI application, creates the FastAPI instance and includes routers
+│   ├── api/
+│   │   ├── __init__.py    # Marks the directory as a Python package
+│   │   ├── v1/
+│   │   │   ├── __init__.py # Marks the directory as a Python package
+│   │   │   ├── endpoints/
+│   │   │   │   ├── __init__.py # Marks the directory as a Python package
+│   │   │   │   ├── users.py   # Defines API endpoints related to user management
+│   │   │   │   ├── items.py   # Defines API endpoints related to item management
+│   │   │   │   ├── auth.py    # Defines API endpoints related to authentication
+│   │   │   ├── routers.py     # Consolidates all API routers for version 1
+│   ├── core/
+│   │   ├── __init__.py        # Marks the directory as a Python package
+│   │   ├── config.py          # Handles application configuration and environment variables
+│   │   ├── security.py        # Provides security-related functions, such as password hashing and token verification
+│   │   ├── events.py          # Defines application event handlers, such as startup and shutdown events
+│   ├── db/
+│   │   ├── __init__.py        # Marks the directory as a Python package
+│   │   ├── session.py         # Manages database sessions and connections
+│   │   ├── repositories/
+│   │   │   ├── __init__.py    # Marks the directory as a Python package
+│   │   │   ├── user.py        # Provides database operations related to user management
+│   │   │   ├── item.py        # Provides database operations related to item management
+│   ├── models/
+│   │   ├── __init__.py        # Marks the directory as a Python package
+│   │   ├── user.py            # Defines the User data model and database table
+│   │   ├── item.py            # Defines the Item data model and database table
+│   ├── schemas/
+│   │   ├── __init__.py        # Marks the directory as a Python package
+│   │   ├── user.py            # Defines Pydantic schemas for user data validation and serialization
+│   │   ├── item.py            # Defines Pydantic schemas for item data validation and serialization
+│   │   ├── token.py           # Defines Pydantic schemas for token-related data
+│   ├── utils/
+│   │   ├── __init__.py        # Marks the directory as a Python package
+│   │   ├── hashing.py         # Provides password hashing and verification functions
+│   │   ├── jwt.py             # Handles JWT token generation and verification
+│   ├── tests/
+│   │   ├── __init__.py        # Marks the directory as a Python package
+│   │   ├── conftest.py        # Defines shared test fixtures and setup
+│   │   ├── test_api/
+│   │   │   ├── __init__.py    # Marks the directory as a Python package
+│   │   │   ├── test_users.py  # Contains tests for user-related API endpoints
+│   │   │   ├── test_items.py  # Contains tests for item-related API endpoints
+│   │   │   ├── test_auth.py   # Contains tests for authentication-related API endpoints
+│   ├── requirements.txt       # Lists the required Python packages and their versions
+│   ├── Dockerfile             # Defines the Docker image build instructions
+│   ├── docker-compose.yml     # Defines the Docker Compose configuration for running the application
+│   ├── pyproject.toml         # Defines the Poetry project configuration, including dependencies
+│   ├── poetry.lock            # Locks the exact versions of dependencies used in the project

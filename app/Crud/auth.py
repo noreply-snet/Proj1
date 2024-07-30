@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from .auth_models import RevokedToken
+from app.models.auth_models import RevokedToken
 from datetime import datetime
 
 
