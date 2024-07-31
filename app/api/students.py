@@ -14,7 +14,7 @@ def student_create(student:schemas.StudentCreate,db:Session = Depends(get_db)):
 
 
 @router.get("/",response_model=List[schemas.StudentResponse])
-def read_student(db:Session = Depends(db.get_db)):
+def read_student(db:Session = Depends(get_db)):
     return student_course.get_student(db=db)
 
 @router.post("/{std_id}/course/{course_id}")

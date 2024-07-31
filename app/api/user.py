@@ -1,21 +1,25 @@
 from fastapi import APIRouter,Depends
 from sqlalchemy.orm import Session
-from app.DB import db,schemas
-from app.Crud import user_crud
-from app.Auth import security
-from app.Auth.auth_crud import revoke_token
-from typing import List
 from datetime import datetime
+from typing import List
+
+from app.db.session import get_db
+from app.schemas import schemas
+from app.crud import user
+from app.core import security
+from app.crud.auth import revoke_token
+
 
 router = APIRouter()
 
+
 @router.post("/",response_model=schemas.UserResponse)
-def user_create(user_data:schemas.UserCreate,db:Session = Depends(db.get_db)):
-    return user_crud.create_user(db=db,user=user_data)
+def user_create(user_data:schemas.UserCreate,db:Session = Depends(get_db)):
+    return user.create_user(db=db,user=user_data)
 
 @router.post("/logout")
-def logout(token: str = Depends(security.oauth2_scheme), db: Session = Depends(db.get_db)):
-    payload = security.verify_token(db=db, token=token)
+def logout(token: str = Depends(security.oauth2_scheme), db: Session = Depends(get_db)):
+    payload = security.jwt_manager.verify_token(db=db, token=token)
     revoke_token(db=db, token_id=payload["jti"], expires_at=datetime.fromtimestamp(payload["exp"]))
     return {"message": "Logged out successfully"}
 
@@ -28,6 +32,6 @@ lockRoutes = APIRouter(
 
 
 @lockRoutes.get("/",response_model=List[schemas.UserResponse])
-def read_user(db:Session = Depends(db.get_db)):
-    return user_crud.get_users(db=db)
+def read_user(db:Session = Depends(get_db)):
+    return user.get_users(db=db)
 
