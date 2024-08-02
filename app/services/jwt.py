@@ -7,11 +7,7 @@ import uuid
 from app.schemas.auth_schemas import JWTPayload
 from app.crud.auth import is_token_revoked
 from app.crud.user import get_user_by_username
-
-SECRET_KEY = "your_secret_key"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
-REFRESH_TOKEN_EXPIRE_MINUTES = 1440
+from app.core.config import settings
 
 class JWTManager:
     def generate_tokens(self, username: str):
@@ -28,14 +24,14 @@ class JWTManager:
     def create_token(data: dict, token_type: str, jwi: str = None) -> str:
         to_encode = data.copy()
         if token_type == "access":
-            expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+            expire = datetime.utcnow() + timedelta(minutes=settings.ACCESS_EXPIRE)
         elif token_type == "refresh":
-            expire = datetime.utcnow() + timedelta(minutes=REFRESH_TOKEN_EXPIRE_MINUTES)
+            expire = datetime.utcnow() + timedelta(minutes=settings.REFRESH_EXPIRE)
         else:
             raise ValueError("Invalid token type. Must be 'access' or 'refresh'.")
         
         to_encode.update({"exp": expire, "jti": jwi})
-        encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+        encoded_jwt = jwt.encode(to_encode, settings.SECRET, algorithm=settings.ALGO)
         return encoded_jwt
 
     def verify_token(self, db: Session, token: str):  # Ensure self is the first parameter
@@ -45,7 +41,7 @@ class JWTManager:
             headers={"WWW-Authenticate": "Bearer"},
         )
         try:
-            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+            payload = jwt.decode(token, settings.SECRET, algorithms=[settings.ALGO])
             
             if is_token_revoked(db, payload["jti"]):
                 raise HTTPException(
