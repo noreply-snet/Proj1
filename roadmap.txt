@@ -1,27 +1,11 @@
-1 --- JWT AUTHENTICATION
-2 --- ORM RELATION -MANY-TO-MANY - WITHOUT PRIMARY KEY
-3 --- OAuth 2.0 ---//
-
-STUDENTS 1 2 3
-
-
-
-COURSE 1 2 3
-
-
-            
-ENROLMENT [ s1 -> c1,c2] , [ s2 -> c1,c2,C3], [S3 ->C3] 
-
-ep1     sRef1 - cRef1
-ep2     sp1 - cp2
-ep3     sp2 - cp1
-ep4     sp2 - cp2
-ep5     sp2 - Cp3
-
-
-
-
-S1    KEY1, KEY2, KEY3 
+1 --- JWT AUTHENTICATION ✅
+2 --- ORM RELATION -MANY-TO-MANY - WITHOUT PRIMARY KEY ✅
+3 --- OAuth 2.0 with facebook & google & linkedin
+4 --- Background Tasks
+5 --- Role-based access control (RBAC) 
+6 --- File Uploads and Background Processing
+7 --- Rate Limiting
+8 --- 
 
 
 
