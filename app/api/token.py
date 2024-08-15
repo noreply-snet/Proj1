@@ -7,8 +7,7 @@ from datetime import timedelta
 from app.schemas import schemas
 from app.db.session import get_db
 from app.core import security
-
-
+from app.crud.auth import cleanup_expired_tokens,get_expired_tokens
 
 router = APIRouter()
 
@@ -43,3 +42,24 @@ async def refresh_access_token(db: Session = Depends(get_db), refresh_token: str
 
     return {"access_token": new_access_token, "refresh_token": new_refresh_token, "token_type": "bearer"}
 
+
+@router.get("/cleanup-tokens")
+def cleanup_token(db: Session = Depends(get_db)):
+    cleanup_expired_tokens(db=db)  
+    return {"message": "Expired tokens cleaned up successfully."}    
+
+    # try:
+    #     cleanup_expired_tokens(db=db)  
+    #     return {"message": "Expired tokens cleaned up successfully."}
+    # except Exception as e:
+    #     # Log the exception if necessary
+    #     raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/exp-tokens")
+def get_exp_token(db: Session = Depends(get_db)):
+    try:
+        return get_expired_tokens(db=db) 
+    except Exception as e:
+        # Log the exception if necessary
+        raise HTTPException(status_code=500, detail=str(e))
