@@ -1,9 +1,9 @@
 1 --- JWT AUTHENTICATION ✅
 2 --- ORM RELATION -MANY-TO-MANY - WITHOUT PRIMARY KEY ✅
 3 --- OAuth 2.0 with facebook & google & linkedin
-4 --- Background Tasks
+4 --- Background Tasks  ✅
 5 --- Role-based access control (RBAC) 
-6 --- File Uploads and Background Processing
+6 --- File Uploads 
 7 --- Rate Limiting
 8 --- 
 
