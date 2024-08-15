@@ -13,8 +13,8 @@ class Settings:
     # Only for Development Work 
     SECRET: str = "your_secret_key"
     ALGO: str = "HS256"
-    ACCESS_EXPIRE: int = "01"
-    REFRESH_EXPIRE: int = "01"
+    ACCESS_EXPIRE: int = 1
+    REFRESH_EXPIRE: int = 1
 
 
 settings = Settings()

@@ -1,6 +1,6 @@
 from fastapi import APIRouter,Depends
 from sqlalchemy.orm import Session
-from datetime import datetime
+from datetime import datetime,timezone
 from typing import List
 
 from app.db.session import get_db
@@ -20,7 +20,8 @@ def user_create(user_data:schemas.UserCreate,db:Session = Depends(get_db)):
 @router.post("/logout")
 def logout(token: str = Depends(security.oauth2_scheme), db: Session = Depends(get_db)):
     payload = security.jwt_manager.verify_token(db=db, token=token)
-    revoke_token(db=db, token_id=payload["jti"], expires_at=datetime.fromtimestamp(payload["exp"]))
+    expires_at = datetime.fromtimestamp(payload["exp"], tz=timezone.utc)
+    revoke_token(db=db, token_id=payload["jti"], expires_at=expires_at)
     return {"message": "Logged out successfully"}
 
 

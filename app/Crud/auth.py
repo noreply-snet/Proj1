@@ -4,6 +4,8 @@ from app.models.auth_models import RevokedToken
 from app.schemas.auth_schemas import RevokeToken
 from datetime import datetime
 from app.services.common import convert_utc_to_ist
+from pytz import utc
+
 
 def revoke_token(db: Session, token_id: str, expires_at: datetime):
     revoked_token = RevokedToken(token_id=token_id, expires_at=expires_at)
@@ -29,8 +31,8 @@ def get_expired_tokens(db: Session):
 
 
 def cleanup_expired_tokens(db: Session):
-    now = datetime.utcnow()
+    now = datetime.utcnow().replace(tzinfo=utc)
     db.execute(
-        delete(RevokedToken).where(RevokedToken.revoked_at < now)
+        delete(RevokedToken).where(RevokedToken.expires_at < now)
     )
     db.commit()  # Commit the transaction
