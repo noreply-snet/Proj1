@@ -1,6 +1,6 @@
 # auth.py
 from sqlalchemy.orm import Session
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 
 from app.services.hashing import verify_password
