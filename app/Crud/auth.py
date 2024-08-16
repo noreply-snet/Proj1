@@ -1,10 +1,8 @@
 from sqlalchemy import delete
 from sqlalchemy.orm import Session
 from app.models.auth_models import RevokedToken
-from app.schemas.auth_schemas import RevokeToken
-from datetime import datetime
+from datetime import datetime, timezone
 from app.services.common import convert_utc_to_ist
-from pytz import utc
 
 
 def revoke_token(db: Session, token_id: str, expires_at: datetime):
@@ -31,7 +29,7 @@ def get_expired_tokens(db: Session):
 
 
 def cleanup_expired_tokens(db: Session):
-    now = datetime.utcnow().replace(tzinfo=utc)
+    now = datetime.now(timezone.utc)
     db.execute(
         delete(RevokedToken).where(RevokedToken.expires_at < now)
     )
