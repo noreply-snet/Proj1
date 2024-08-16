@@ -1,17 +1,17 @@
 from sqlalchemy.orm import Session
-from app.schemas import schemas
-from app.models import models
+from app.schemas import user_sch
+from app.models import user_models
 from app.services.hashing import hash_password
 
 # Get user by username
 def get_user_by_username(db: Session, username: str):
-    return db.query(models.Users).filter(models.Users.username == username).first()
+    return db.query(user_models.Users).filter(user_models.Users.username == username).first()
 
 # Get all users
 def get_users(db: Session):
-    users = db.query(models.Users).all()
+    users = db.query(user_models.Users).all()
     return [
-        schemas.UserResponse(
+        user_sch.UserResponse(
             name=user.name,
             username=user.username,
             role=user.role.name  # Include the role in the response
@@ -19,14 +19,14 @@ def get_users(db: Session):
     ]
 
 # Create a new user with a role
-def create_user(db: Session, user: schemas.UserCreate, role_name: str):
+def create_user(db: Session, user: user_sch.UserCreate):
     password = hash_password(user.password)
-    role = db.query(models.Role).filter(models.Role.name == role_name).first()
+    role = db.query(user_models.Role).filter(user_models.Role.name == user.role_name).first()
     
     if not role:
-        raise ValueError(f"Role '{role_name}' does not exist")
+        raise ValueError(f"Role '{user.role_name}' does not exist")
 
-    db_user = models.Users(
+    db_user = user_models.User(
         username=user.username,
         name=user.name,
         hashed_password=password,
@@ -43,7 +43,7 @@ def assign_role_to_user(db: Session, username: str, role_name: str):
     if not user:
         raise ValueError(f"User '{username}' does not exist")
     
-    role = db.query(models.Role).filter(models.Role.name == role_name).first()
+    role = db.query(user_models.Role).filter(user_models.Role.name == role_name).first()
     if not role:
         raise ValueError(f"Role '{role_name}' does not exist")
 
@@ -54,9 +54,9 @@ def assign_role_to_user(db: Session, username: str, role_name: str):
 
 # Get user by ID with role
 def get_user_by_id(db: Session, user_id: int):
-    user = db.query(models.Users).filter(models.Users.id == user_id).first()
+    user = db.query(user_models.Users).filter(user_models.Users.id == user_id).first()
     if user:
-        return schemas.UserResponse(
+        return user_sch.UserResponse(
             name=user.name,
             username=user.username,
             role=user.role.name  # Include the role in the response

@@ -1,6 +1,6 @@
 from sqlalchemy import delete
 from sqlalchemy.orm import Session
-from app.models.auth_models import RevokedToken
+from app.models.jwt_models import RevokedToken
 from datetime import datetime, timezone
 from app.services.common import convert_utc_to_ist
 

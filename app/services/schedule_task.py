@@ -1,4 +1,4 @@
-from app.crud.auth import cleanup_expired_tokens
+from app.crud.jwt_curd import cleanup_expired_tokens
 from app.db.session import get_db
 import schedule
 import datetime

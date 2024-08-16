@@ -5,8 +5,8 @@ from fastapi import HTTPException, status
 import uuid
 
 from app.schemas.auth_schemas import JWTPayload
-from app.crud.auth import is_token_revoked
-from app.crud.user import get_user_by_username
+from app.crud.jwt_curd import is_token_revoked
+from app.crud.user_crud import get_user_by_username
 from app.core.config import settings
 
 
@@ -76,3 +76,7 @@ class JWTManager:
                 headers={"WWW-Authenticate": "Bearer"},
             )
         return user  # Return the user
+
+
+
+jwt_manager = JWTManager()  # Create an instance of JWTManager

@@ -1,19 +1,18 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-from datetime import timedelta
 
-
-from app.schemas import schemas
+from app.schemas import user_sch
 from app.db.session import get_db
 from app.core import security
-from app.crud.auth import cleanup_expired_tokens,get_expired_tokens
+from app.core.security import jwt_manager
+from app.crud.jwt_curd import cleanup_expired_tokens,get_expired_tokens
 
 router = APIRouter()
 
 
 
-@router.post("/token", response_model=schemas.Token)
+@router.post("/token", response_model=user_sch.Token)
 async def login_for_access_token(db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()):
     user = security.authenticate_user(db, form_data.username, form_data.password)
     if not user:
@@ -28,7 +27,7 @@ async def login_for_access_token(db: Session = Depends(get_db), form_data: OAuth
 
 
 
-@router.post("/refresh-token", response_model=schemas.Token)
+@router.post("/refresh-token", response_model=user_sch.Token)
 async def refresh_access_token(db: Session = Depends(get_db), refresh_token: str  = ""):
     payload = security.jwt_manager.verify_token(db=db, token=refresh_token)
     user = security.jwt_manager.get_user_by_paload(db=db, payload=payload)

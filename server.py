@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from app.db.session import engine, Base
-from app.api import students, cources, token, user
+from app.api import students, token, user , role_permission
 from threading import Thread
 from app.services.schedule_task import run_scheduler
 from pathlib import Path
@@ -31,8 +31,8 @@ app = FastAPI(lifespan=lifespan)
 
 
 
-app.include_router(students.router, prefix="/student", tags=["student"])
-app.include_router(cources.router, prefix="/course", tags=["course"])
-app.include_router(token.router, prefix="/auth", tags=["auth"])
-app.include_router(user.router, prefix="/user", tags=["user"])
-app.include_router(user.lockRoutes, prefix="/lock", tags=["lock_user"])
+app.include_router(students.router, prefix="/student", tags=["Student"])
+app.include_router(token.router, prefix="/auth", tags=["Tokens"])
+app.include_router(user.router, prefix="/user", tags=["User"])
+app.include_router(user.lockRoutes, prefix="/lock", tags=["Lock Routes"])
+app.include_router(role_permission.router, prefix="/permit", tags=["Roles and Permissions"])

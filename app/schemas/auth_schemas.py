@@ -10,3 +10,4 @@ class RevokeToken(BaseModel):
     token_id: str
     revoked_at: datetime
     expires_at: datetime
+    

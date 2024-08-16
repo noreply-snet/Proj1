@@ -7,19 +7,19 @@ from typing import List
 from pathlib import Path
 
 from app.db.session import get_db
-from app.schemas import schemas
-from app.crud import user
+from app.schemas import user_sch
+from app.crud import user_crud
 from app.core import security
-from app.crud.auth import revoke_token
-
+from app.crud.jwt_curd import revoke_token
+from app.models.user_models import Role
 
 router = APIRouter()
 
 UPLOAD_DIR = Path("uploads")
 
-@router.post("/",response_model=schemas.UserResponse)
-def user_create(user_data:schemas.UserCreate,db:Session = Depends(get_db)):
-    return user.create_user(db=db,user=user_data)
+@router.post("/",response_model=user_sch.UserCreate)
+def user_create(user_data:user_sch.UserCreate,db:Session = Depends(get_db)):
+    return user_crud.create_user(db=db,user=user_data)
 
 @router.post("/logout")
 def logout(token: str = Depends(security.oauth2_scheme), db: Session = Depends(get_db)):
@@ -36,9 +36,9 @@ lockRoutes = APIRouter(
 
 
 
-@lockRoutes.get("/",response_model=List[schemas.UserResponse])
+@lockRoutes.get("/",response_model=List[user_sch.UserResponse])
 def read_user(db:Session = Depends(get_db)):
-    return user.get_users(db=db)
+    return user_crud.get_users(db=db)
 
 
 @lockRoutes.post("/uploadfile/")
@@ -58,3 +58,27 @@ async def get_file(filename: str):
     if not file_location.exists():
         raise HTTPException(status_code=404, detail="File not found")
     return FileResponse(file_location)
+
+@lockRoutes.get("/admin-dashboard")
+async def admin_dashboard(
+    role_check: Role = Depends(security.role_checker(["Admin"]))
+):
+    return {"message": "Welcome to the -> -> -> Admin dashboard"}
+
+@lockRoutes.get("/editor-page")
+async def editor_page(
+    role_check: Role = Depends(security.role_checker(["Admin","Editor"]))
+):
+    return {"message": "Welcome to the -> -> Editor page"}
+
+@lockRoutes.get("/visitor-page")
+async def editor_page(
+    role_check: Role = Depends(security.role_checker(["Admin","Editor","Visitor"]))
+):
+    return {"message": "Welcome to the -> Visitor page"}
+
+@lockRoutes.get("/has-permission-page")
+async def editor_page(
+    role_check: Role = Depends(security.permission_checker("read_user"))
+):
+    return {"message": "Welcome to the -> Read_User permissionm page"}
