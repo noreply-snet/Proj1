@@ -3,7 +3,7 @@
 3 --- OAuth 2.0 with facebook & google & linkedin
 4 --- Background Tasks  ✅
 5 --- Role-based access control (RBAC) 
-6 --- File Uploads 
+6 --- File Uploads ✅
 7 --- Rate Limiting
 8 --- 
 
