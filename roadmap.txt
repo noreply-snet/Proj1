@@ -1,11 +1,16 @@
 1 --- JWT AUTHENTICATION ✅
 2 --- ORM RELATION -MANY-TO-MANY - WITHOUT PRIMARY KEY ✅
-3 --- OAuth 2.0 with facebook & google & linkedin
+3 --- File Uploads ✅
 4 --- Background Tasks  ✅
-5 --- Role-based access control (RBAC) 
-6 --- File Uploads ✅
+5 --- Role-based access control (RBAC) ✅
+6 --- OAuth 2.0 with facebook & google & linkedin
 7 --- Rate Limiting
-8 --- 
-
+8 --- Database Migrations 
+9 --- Versioning APIs
+10 --- Testing\ Mocking Dependencies 
+11 --- Testing\ Unit and Integration Testing
+12 --- Caching
+13 --- Containerization with Docker
+14 --- Real-time Features \ WebSockets
 
 
