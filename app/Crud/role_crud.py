@@ -11,7 +11,8 @@ def create_role(db: Session, role: role_permit.RoleCreate):
     return db_role
 
 def get_role(db: Session, role_id: int):
-    return db.query(user_models.Role).filter(user_models.Role.id == role_id).first()
+    role = db.query(user_models.Role).filter(user_models.Role.id == role_id).first()
+    return role
 
 def get_roles(db: Session):
     return db.query(user_models.Role).all()

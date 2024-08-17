@@ -17,7 +17,7 @@ router = APIRouter()
 
 UPLOAD_DIR = Path("uploads")
 
-@router.post("/",response_model=user_sch.UserCreate)
+@router.post("/",response_model=user_sch.UserResponse)
 def user_create(user_data:user_sch.UserCreate,db:Session = Depends(get_db)):
     return user_crud.create_user(db=db,user=user_data)
 
@@ -27,7 +27,6 @@ def logout(token: str = Depends(security.oauth2_scheme), db: Session = Depends(g
     expires_at = datetime.fromtimestamp(payload["exp"], tz=timezone.utc)
     revoke_token(db=db, token_id=payload["jti"], expires_at=expires_at)
     return {"message": "Logged out successfully"}
-
 
 
 lockRoutes = APIRouter(

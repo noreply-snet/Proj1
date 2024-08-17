@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordBearer
 
 from app.services.hashing import verify_password
 from app.services.jwt import jwt_manager
-from app import crud
+from app.crud import user_crud
 from app.db.session import get_db
 from app.models.user_models import User, Role, Permission
 
@@ -12,7 +12,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
 # Authenticate the user by verifying the password
 def authenticate_user(db: Session, username: str, password: str):
-    user = crud.user.get_user_by_username(db, username)
+    user = user_crud.get_user_by_username(db, username)
     if not user or not verify_password(password, user.hashed_password):
         return False
     return user
