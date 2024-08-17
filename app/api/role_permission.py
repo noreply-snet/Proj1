@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.schemas import role_permit
-from app.crud import role_crud
+from app.crud import role_crud,user_crud
+from app.schemas import user_sch
 from app.db.session import get_db
 from typing import List
 
@@ -58,8 +59,17 @@ def delete_permission(permission_id: int, db: Session = Depends(get_db)):
 #////////////////////////////////
 # Endpoint to assign a permission to a role
 @router.post("/roles/{role_id}/permissions/{permission_id}", response_model=role_permit.RoleResponse)
-def assign_permission(role_id: int, permission_id: int, db: Session = Depends(get_db)):
+def assign_permission_to_role(role_id: int, permission_id: int, db: Session = Depends(get_db)):
     role = role_crud.assign_permission_to_role(db=db, role_id=role_id, permission_id=permission_id)
     if role is None:
         raise HTTPException(status_code=404, detail="Role or Permission not found")
     return role
+
+# Endpoint to assign a permission to a user
+@router.post("/users/{username}/permissions/{permission_name}", response_model=user_sch.UserResponse)
+def assign_permission_to_user(username: str, permission_name: str, db: Session = Depends(get_db)):
+    try:
+        user = user_crud.assign_permission_to_user(db=db, username=username, permission_name=permission_name)
+        return user  # Return the updated user response
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))  # Handle errors

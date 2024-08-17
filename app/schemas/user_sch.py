@@ -1,6 +1,6 @@
 from pydantic import BaseModel
-from typing import Optional
-
+from typing import Optional, List
+from app.schemas.role_permit import PermissionBase
 
 
 # Base schema for user-related data
@@ -12,10 +12,11 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str
     role_name: Optional[str] = None  # Add role_name to assign a role during user creation
-
+   
 # Schema for user response (output)
 class UserResponse(UserBase):
     role: Optional[str] = None  # Include the user's role in the response
+    permissions: Optional[List[str]] = None  # Include the user's permissions in the response
 
     class Config:
         from_attributes = True

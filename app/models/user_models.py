@@ -35,6 +35,13 @@ role_permission = Table(
     Column('permission_id', Integer, ForeignKey('permissions.id'))
 )
 
+# Association table for many-to-many relationship between users and permissions
+user_permission = Table(
+    'user_permission', Base.metadata,
+    Column('user_id', Integer, ForeignKey('users.id')),
+    Column('permission_id', Integer, ForeignKey('permissions.id'))
+)
+
 class Role(Base):
     __tablename__ = 'roles'
     id = Column(Integer, primary_key=True, index=True)
@@ -46,6 +53,7 @@ class Permission(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
     roles = relationship("Role", secondary=role_permission, back_populates="permissions")
+    users = relationship("User", secondary=user_permission, back_populates="permissions")
 
 class User(Base):
     __tablename__ = 'users'
@@ -55,3 +63,4 @@ class User(Base):
     hashed_password = Column(String)
     role_id = Column(Integer, ForeignKey('roles.id'))
     role = relationship("Role")
+    permissions = relationship("Permission", secondary=user_permission, back_populates="users")

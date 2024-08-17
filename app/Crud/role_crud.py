@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from app.models import user_models
 from app.schemas import role_permit
 
+
 # CRUD operations for Role
 def create_role(db: Session, role: role_permit.RoleCreate):
     db_role = user_models.Role(name=role.name)
@@ -58,3 +59,5 @@ def assign_permission_to_role(db: Session, role_id: int, permission_id: int):
         db.refresh(role)
         return role
     return None
+
+
