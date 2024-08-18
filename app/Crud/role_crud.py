@@ -13,6 +13,8 @@ def create_role(db: Session, role: role_permit.RoleCreate):
 
 def get_role(db: Session, role_id: int):
     role = db.query(user_models.Role).filter(user_models.Role.id == role_id).first()
+    if role is None:
+        raise HTTPException(status_code=404, detail="Role or Permission not found")
     return role
 
 def get_roles(db: Session):

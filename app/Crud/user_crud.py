@@ -59,6 +59,9 @@ def create_user(db: Session, user: user_sch.UserCreate):
 
     # Add role permissions to the user
     db_user.permissions.extend(role_permissions)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
 
     # Create UserResponse with permissions
     return user_sch.UserResponse(
@@ -122,4 +125,36 @@ def assign_permission_to_user(db: Session, username: str, permission_name: str):
         username=user.username,
         role=get_role(db=db, role_id=user.role_id).name,  # Include detailed role information
         permissions=[perm.name for perm in user.permissions]  # Include permissions
+    )
+
+# Change a role for a user and reassign permissions
+def change_role_to_user(db: Session, username: str, role_id: int):
+    # Fetch the user by username
+    user = get_user_by_username(db, username)
+    if not user:
+        raise ValueError(f"User '{username}' does not exist")
+    
+    # Fetch the role by role_id
+    role = get_role(db, role_id)
+    if not role:
+        raise ValueError(f"Role with ID '{role_id}' does not exist")
+
+    # Check if the user already has the role
+    if user.role_id == role_id:
+        raise ValueError(f"User '{username}' already has the role '{role.name}'")
+
+    # Reassign permissions based on the new role
+    user.permissions.clear()   # Clear existing permissions
+    permissions = role.permissions  # Fetch permissions associated with the new role
+    user.permissions.extend(permissions)  # Assign new permissions to the user
+
+    user.role_id = role_id  # Assign the new role to the user
+    db.commit()  # Commit changes to the database
+    db.refresh(user)  # Refresh the user object to reflect the new state
+
+    return user_sch.UserResponse(
+        name=user.name,
+        username=user.username,
+        role=role.name,  # Include detailed role information
+        permissions=[perm.name for perm in user.permissions]  # Include updated permissions
     )

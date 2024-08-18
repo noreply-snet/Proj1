@@ -39,15 +39,9 @@ def role_checker(required_roles: list[str]):
 # Check if the current user has the required permission
 def permission_checker(required_permission: str):
     def permission_dependency(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-        role = db.query(Role).filter(Role.id == current_user.role_id).first()
-        if not role:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Operation not permitted",
-            )
 
-        # Fetch all permissions associated with the user's role
-        permissions = [permission.name for permission in role.permissions]
+        # Fetch all permissions associated with the user's have
+        permissions = [permission.name for permission in current_user.permissions]
         if required_permission not in permissions:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
