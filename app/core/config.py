@@ -18,3 +18,12 @@ class Settings:
 
 
 settings = Settings()
+
+
+
+# Predefined roles and permissions
+predefined_roles = [
+    {"role_name": "Admin", "permissions": ["read_user", "write_user", "delete_user"]},
+    {"role_name": "Editor", "permissions": ["read_user", "write_user"]},
+    {"role_name": "Visitor", "permissions": ["read_user"]},
+]

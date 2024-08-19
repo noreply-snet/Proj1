@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from app.models import user_models
 from app.schemas import role_permit
-
+from sqlalchemy import delete
 
 # CRUD operations for Role
 def create_role(db: Session, role: role_permit.RoleCreate):
@@ -28,6 +28,11 @@ def delete_role(db: Session, role_id: int):
         return True
     return False
 
+def role_exists(db: Session, role_name: str) -> bool:
+    return db.query(user_models.Role).filter(user_models.Role.name == role_name).first() is not None
+
+
+
 
 # CRUD operations for Permission
 def create_permission(db: Session, permission: role_permit.PermissionCreate):
@@ -51,6 +56,10 @@ def delete_permission(db: Session, permission_id: int):
         return True
     return False
 
+def permission_exists(db: Session, permission_name: str) -> bool:
+    return db.query(user_models.Permission).filter(user_models.Permission.name == permission_name).first() is not None
+
+
 # Assign a permission to a role
 def assign_permission_to_role(db: Session, role_id: int, permission_id: int):
     role = get_role(db, role_id)
@@ -62,4 +71,7 @@ def assign_permission_to_role(db: Session, role_id: int, permission_id: int):
         return role
     return None
 
-
+#Clear the role-permission link table
+def clear_role_permission_links(db: Session):
+    db.execute(delete(user_models.role_permission))
+    db.commit()
