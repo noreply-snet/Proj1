@@ -2,4 +2,5 @@
 /env
 __pycache__
 # /sql_app.db
+**/versions
 /uploads
